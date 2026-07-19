@@ -13,7 +13,7 @@ const app = express();
 connectDB();
 
 app.use(cors({
-  origin: "https://interview-prep-ai-nishika-singh.vercel.app/",
+  origin: "https://interview-prep-ai-nishika-singh.vercel.app",
   credentials: true,
 }));
 
