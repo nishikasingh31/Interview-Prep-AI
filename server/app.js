@@ -6,7 +6,11 @@ import interviewRoutes from './src/routes/interviewRoutes.js';
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://interview-prep-ai-nishika-singh.vercel.app/",
+  credentials: true,
+}));
+
 app.use(express.json());
 
 // Routes
