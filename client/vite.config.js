@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/api": "http://localhost:5000", // forwards frontend API calls to your Express backend
+      "/api": "https://interview-prep-ai-l5lt.onrender.com/", // forwards frontend API calls to your Express backend
     },
   },
 });
