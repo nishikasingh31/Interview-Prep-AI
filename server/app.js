@@ -7,7 +7,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: "https://interview-prep-ai-nishika-singh.vercel.app/",
+  origin: "https://interview-prep-ai-nishika-singh.vercel.app",
   credentials: true,
 }));
 
