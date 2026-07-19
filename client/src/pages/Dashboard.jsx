@@ -186,7 +186,8 @@ export default function Dashboard() {
       token: localStorage.getItem("token"),
     });
 
-    const es = new EventSource(`${import.meta.env.VITE_API_URL}/api/questions/stream?${params.toString()}`);
+    const apiUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
+    const es = new EventSource(`${apiUrl}/api/questions/stream?${params.toString()}`);
     eventSourceRef.current = es;
 
     es.onmessage = (event) => {
