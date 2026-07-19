@@ -12,7 +12,11 @@ const app = express();
 
 connectDB();
 
-app.use(cors());
+app.use(cors({
+  origin: "https://your-app.vercel.app",
+  credentials: true,
+}));
+
 app.use(express.json());
 
 const limiter = rateLimit({
