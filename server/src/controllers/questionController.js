@@ -2,7 +2,7 @@ import QuestionSet from "../models/Questions.js";
 import { generateInterviewQuestions, streamInterviewQuestions } from "../services/aiService.js";
 
 export const generateQuestions = async (req, res) => {
-   console.log("generateQuestions HIT"); // add this line
+  console.log("generateQuestions HIT");
   try {
     const { role, experienceLevel = "Junior", topics = [], numQuestions = 5 } = req.body;
 
@@ -54,18 +54,21 @@ export const getQuestionSetById = async (req, res) => {
 export const streamQuestions = async (req, res) => {
   try {
     const { role, experienceLevel = "Junior", numQuestions = 5, difficulty = "mixed", categories } = req.query;
+
     if (!role) {
       return res.status(400).json({ success: false, message: "role query param is required." });
     }
 
-    const categoryList = categories ? categories.split(",") : ["technical", "behavioral", "situational", "general"];
+    const categoryList = categories
+      ? categories.split(",")
+      : ["technical", "behavioral", "situational", "general"];
 
     const fullText = await streamInterviewQuestions(
       { role, experienceLevel, numQuestions: Number(numQuestions), difficulty, categories: categoryList },
       res
     );
 
-    // Parse the streamed pipe-format text into structured questions, then save
+    // Parse the streamed pipe-format text into structured questions
     const parsedQuestions = fullText
       .split("\n")
       .map((line) => line.trim())
@@ -75,35 +78,17 @@ export const streamQuestions = async (req, res) => {
         if (parts.length < 3) return null;
         const [category, difficultyVal, ...rest] = parts;
         const questionText = rest.join("|").trim();
-        if (!questionText) return null; 
+        if (!questionText) return null;
         return {
           category: category.trim().toLowerCase(),
           difficulty: difficultyVal.trim().toLowerCase(),
-          question: rest.join("|").trim(),
+          question: questionText,
         };
       })
-      .filter(Boolean);
+      .filter(Boolean)
+      .slice(0, Number(numQuestions));
 
-     if (parsedQuestions.length < targetCount) {
-      const shortfall = targetCount - parsedQuestions.length;
-      try {
-        const extra = await generateExtraQuestions({
-          role,
-          experienceLevel,
-          difficulty,
-          categories: categoryList,
-          count: shortfall,
-          existingQuestions: parsedQuestions,
-        });
-        parsedQuestions = [...parsedQuestions, ...extra];
-      } catch (topUpErr) {
-        console.error("Top-up generation failed:", topUpErr.message);
-        // Not fatal — just proceed with what we have
-      }
-    }
-
-    const finalQuestions = parsedQuestions.slice(0, targetCount);
-    
+    // Save the generated set for the logged-in user, if any were parsed
     if (parsedQuestions.length > 0 && req.user) {
       await QuestionSet.create({
         role,
