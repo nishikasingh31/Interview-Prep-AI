@@ -1,0 +1,52 @@
+# Interview Prep AI — Requirements
+
+## System Requirements
+Node.js >= 18.0.0
+npm >= 9.0.0
+MongoDB >= 6.0 (local instance or MongoDB Atlas)
+
+## Backend Dependencies (server/package.json)
+bcryptjs==2.4.3
+cors==2.8.5
+dotenv==16.4.5
+express==4.19.2
+express-rate-limit==7.4.0
+jsonwebtoken==9.0.2
+mongoose==8.5.1
+openai==4.55.0
+
+## Backend Dev Dependencies
+nodemon==3.1.4
+
+## Frontend Dependencies (client/package.json)
+axios==1.7.7
+framer-motion==latest
+lucide-react==latest
+react==18.3.1
+react-dom==18.3.1
+react-router-dom==6.26.1
+
+## Frontend Dev Dependencies
+@vitejs/plugin-react==4.3.1
+vite==5.4.1
+
+## External Services Required
+- MongoDB connection string (MONGO_URI)
+- Groq API key (GROQ_API_KEY) — free tier available at console.groq.com
+- JWT secret (JWT_SECRET) — any long random string, self-generated
+
+## Environment Variables Required (server/.env)
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=llama-3.1-8b-instant
+JWT_SECRET=your_random_secret_string
+NODE_ENV=development
+
+## Installation
+cd server && npm install
+cd client && npm install
+
+## Running
+cd server && nodemon server.js     # starts backend on port 5000
+cd client && npm run dev     # starts frontend on port 5173
