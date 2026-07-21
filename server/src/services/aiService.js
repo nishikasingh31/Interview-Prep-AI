@@ -1,25 +1,54 @@
 import OpenAI from "openai";
-
 import dotenv from "dotenv";
 dotenv.config();
 
-// Groq exposes an OpenAI-compatible API, so we reuse the same SDK
-// and just point it at Groq's base URL with a Groq API key.
 const groq = new OpenAI({
   apiKey: process.env.GROQ_API_KEY,
   baseURL: "https://api.groq.com/openai/v1",
 });
 
-export async function generateInterviewQuestions({ role, experienceLevel, topics = [], numQuestions = 10 }) {
+const VARIETY_ANGLES = [
+  "focus on debugging a tricky production issue",
+  "focus on a design/architecture tradeoff decision",
+  "focus on a time they disagreed with a teammate or lead",
+  "focus on performance or scaling a system under load",
+  "focus on a mistake they made and what they learned",
+  "focus on collaborating across teams or with non-technical stakeholders",
+  "focus on prioritizing under a tight deadline",
+  "focus on a tool/technology choice and why",
+  "focus on onboarding into unfamiliar code or a legacy system",
+  "focus on handling ambiguous or incomplete requirements",
+];
+
+function pickRandomAngles(count = 3) {
+  const shuffled = [...VARIETY_ANGLES].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+export async function generateInterviewQuestions({
+  role,
+  experienceLevel,
+  topics = [],
+  numQuestions = 10,
+  excludeQuestions = [],
+}) {
   const topicsLine = topics.length ? `The candidate wants extra focus on: ${topics.join(", ")}.` : "";
+  const angles = pickRandomAngles(3);
+  const angleLine = `To keep things fresh, lean into these angles where relevant: ${angles.join("; ")}.`;
+  const excludeLine = excludeQuestions.length
+    ? `Do NOT repeat or closely resemble any of these previously used questions: ${excludeQuestions.join(" | ")}`
+    : "";
 
   const systemPrompt = `You are a senior hiring manager who has personally interviewed hundreds of candidates for "${role}" positions.
 Write questions exactly as you would actually ask them in a real interview — specific, grounded in real tools/scenarios for this role, not generic textbook questions.
 Avoid vague phrasing like "explain the concept of X" — instead ask how the candidate would use it, debug it, or decide between tradeoffs, the way a real interviewer probes reasoning.
+Avoid the most common, cliché interview questions — assume the candidate has heard those before.
 Always respond with ONLY valid JSON — no markdown, no commentary.`;
 
   const userPrompt = `Generate ${numQuestions} interview questions for a "${role}" candidate at ${experienceLevel} level.
 ${topicsLine}
+${angleLine}
+${excludeLine}
 
 Requirements:
 - Ground questions in real, specific tools/scenarios for this exact role (name actual technologies, real situations, real tradeoffs) — not generic "what is X" questions.
@@ -45,9 +74,8 @@ Respond with ONLY this JSON:
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
-    temperature: 0.8,
+    temperature: 0.95,
     max_tokens: 2048,
-    stream: true,
   });
 
   const raw = response.choices[0].message.content;
@@ -69,7 +97,15 @@ Respond with ONLY this JSON:
 }
 
 export async function streamInterviewQuestions(
-  { role, experienceLevel, topics = [], numQuestions = 5, difficulty = "mixed", categories = ["technical", "behavioral", "situational", "general"] },
+  {
+    role,
+    experienceLevel,
+    topics = [],
+    numQuestions = 5,
+    difficulty = "mixed",
+    categories = ["technical", "behavioral", "situational", "general"],
+    excludeQuestions = [],
+  },
   res
 ) {
   const topicsLine = topics.length ? `Focus especially on: ${topics.join(", ")}.` : "";
@@ -78,9 +114,15 @@ export async function streamInterviewQuestions(
       ? "Vary difficulty across easy, medium, and hard."
       : `All questions must be ${difficulty} difficulty only — no exceptions.`;
   const categoryLine = `Only generate questions from these categories: ${categories.join(", ")}.`;
+  const angles = pickRandomAngles(3);
+  const angleLine = `To keep things fresh and varied, lean into these angles where relevant: ${angles.join("; ")}.`;
+  const excludeLine = excludeQuestions.length
+    ? `Do NOT repeat or closely resemble any of these previously used questions:\n${excludeQuestions.join("\n")}`
+    : "";
 
   const systemPrompt = `You are a senior hiring manager who has personally interviewed hundreds of candidates for "${role}" positions.
 Write questions exactly as you would actually ask them in a real interview — specific, grounded in real tools/scenarios for this role.
+Avoid the most common, cliché interview questions — assume the candidate has already heard those before.
 Output ONLY plain text, one question per line, in EXACTLY this format with pipe separators:
 category|difficulty|question text here
 
@@ -94,6 +136,8 @@ Rules:
 ${categoryLine}
 ${difficultyLine}
 ${topicsLine}
+${angleLine}
+${excludeLine}
 Write all ${numQuestions} questions completely — do not stop early.`;
 
   // Scale token budget with requested count, with generous headroom
@@ -105,7 +149,7 @@ Write all ${numQuestions} questions completely — do not stop early.`;
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
-    temperature: 0.7,
+    temperature: 0.9,
     max_tokens: estimatedTokens,
     stream: true,
   });
@@ -208,7 +252,7 @@ Do not repeat or closely resemble these already-used questions: ${existingList}`
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
-    temperature: 0.7,
+    temperature: 0.8,
     max_tokens: Math.max(512, count * 120),
   });
 
