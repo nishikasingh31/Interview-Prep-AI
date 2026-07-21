@@ -283,7 +283,7 @@ input:focus, select:focus {
 .tab:hover { color: var(--text-muted); }
 .tab-active { color: var(--accent-deep); border-bottom-color: var(--accent); }
 
-.history-question-list {
+.history-list {
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
