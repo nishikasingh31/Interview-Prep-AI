@@ -32,7 +32,7 @@ Built with a Node/Express + MongoDB backend and a React (Vite) frontend, powered
 
 ## Project Structure
 
-\`\`\`
+```
 interview-prep-ai/
 ├── server/
 │   ├── src/
@@ -76,7 +76,7 @@ interview-prep-ai/
     ├── index.html
     ├── vite.config.js
     └── package.json
-\`\`\`
+```
 
 ## How It Works
 
