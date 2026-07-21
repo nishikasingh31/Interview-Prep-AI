@@ -1,7 +1,5 @@
 import { useState, useRef } from "react";
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 function parseQuestions(rawText) {
   return rawText
     .split("\n")
@@ -35,7 +33,7 @@ function QuestionCard({ q, index }) {
     setSubmitting(true);
     setError("");
     try {
-      const res = await fetch(`${API_URL}/api/answers`, {
+      const res = await fetch("/api/answers", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ question: q.question, userAnswer: answer }),
@@ -54,7 +52,7 @@ function QuestionCard({ q, index }) {
     setLoadingModel(true);
     setError("");
     try {
-      const res = await fetch(`${API_URL}/api/answers/model-answer`, {
+      const res = await fetch("/api/answers/model-answer", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ question: q.question }),
@@ -139,17 +137,19 @@ function QuestionCard({ q, index }) {
   );
 }
 
+const DEFAULT_CATEGORIES = {
+  technical: true,
+  behavioral: true,
+  situational: true,
+  general: true,
+};
+
 export default function Dashboard() {
   const [role, setRole] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("Junior");
   const [numQuestions, setNumQuestions] = useState(5);
   const [difficulty, setDifficulty] = useState("mixed");
-  const [categories, setCategories] = useState({
-    technical: true,
-    behavioral: true,
-    situational: true,
-    general: true,
-  });
+  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
   const [streamedText, setStreamedText] = useState("");
   const [parsedQuestions, setParsedQuestions] = useState([]);
   const [isStreaming, setIsStreaming] = useState(false);
@@ -158,6 +158,22 @@ export default function Dashboard() {
 
   const toggleCategory = (cat) => {
     setCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
+  };
+
+  const handleReset = () => {
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+    }
+    setRole("");
+    setExperienceLevel("Junior");
+    setNumQuestions(5);
+    setDifficulty("mixed");
+    setCategories(DEFAULT_CATEGORIES);
+    setStreamedText("");
+    setParsedQuestions([]);
+    setIsStreaming(false);
+    setError("");
   };
 
   const handleGenerate = (e) => {
@@ -188,7 +204,7 @@ export default function Dashboard() {
       token: localStorage.getItem("token"),
     });
 
-    const es = new EventSource(`${API_URL}/api/questions/stream?${params.toString()}`);
+    const es = new EventSource(`/api/questions/stream?${params.toString()}`);
     eventSourceRef.current = es;
 
     es.onmessage = (event) => {
@@ -251,6 +267,9 @@ export default function Dashboard() {
         <div className="card-actions">
           <button type="submit" className="btn btn-primary" disabled={isStreaming}>
             {isStreaming ? "Generating..." : "Generate questions"}
+          </button>
+          <button type="button" className="btn btn-ghost" onClick={handleReset} disabled={isStreaming}>
+            Reset
           </button>
         </div>
       </form>
