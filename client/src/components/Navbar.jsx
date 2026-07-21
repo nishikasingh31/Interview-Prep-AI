@@ -16,14 +16,14 @@ export default function Navbar() {
       <div className="nav-actions">
         {user ? (
           <>
-                        <span className="nav-user">Hi, {user.name}</span>
-            <Link to="/history" className="btn btn-ghost">History</Link>
-            <button onClick={handleLogout} className="btn btn-ghost">Log out</button>
+            <span className="nav-user">Hi, {user.name}</span>
+            <Link to="/history" className="btn nav-btn">History</Link>
+            <button onClick={handleLogout} className="btn nav-btn">Log out</button>
           </>
         ) : (
           <>
-            <Link to="/login" className="btn btn-ghost">Log in</Link>
-            <Link to="/register" className="btn btn-primary">Sign up</Link>
+            <Link to="/login" className="btn nav-btn">Log in</Link>
+            <Link to="/register" className="btn nav-btn">Sign up</Link>
           </>
         )}
       </div>
