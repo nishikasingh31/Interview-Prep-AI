@@ -12,6 +12,8 @@ const app = express();
 
 connectDB();
 
+app.set("trust proxy", 1);
+
 app.use(cors({
   origin: "https://interview-prep-ai-nishika-singh.vercel.app",
   credentials: true,
