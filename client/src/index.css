@@ -128,8 +128,15 @@ input:focus, select:focus {
 .btn-primary { background: var(--accent); color: #fff; margin-top: 1rem; }
 .btn-primary:hover { background: var(--accent-deep); }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-ghost { background: var(--accent); color: var(--text); border: 1px solid var(--border-strong); }
-.btn-ghost:hover { background: var(--surface-alt); }
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+}
+.btn-ghost:hover {
+  background: var(--surface-alt);
+  border-color: var(--accent);
+}
 .btn-block { width: 100%; }
 
 .error-text { color: var(--danger); font-size: 0.9rem; }
