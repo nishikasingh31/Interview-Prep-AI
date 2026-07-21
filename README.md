@@ -150,7 +150,7 @@ Groq's OpenAI-compatible endpoint, so swapping to OpenAI, Gemini, or any other O
 
 Three distinct prompt strategies are used across the app, each tuned for its specific job:
 
-**1. Question generation (streaming)** 
+**1. Question generation (streaming)** -
 Instructs the model to act as *"a senior hiring manager who has personally interviewed hundreds of candidates for this role"* rather than a generic assistant, and explicitly 
 avoids textbook-style phrasing (e.g. "explain the concept of X") in favor of real, scenario-based questions grounded in actual tools and tradeoffs. Output is constrained to a strict `category|difficulty|question` pipe-delimited format rather than JSON, since pipe-delimited text can be parsed incrementally as it streams in — JSON cannot be safely parsed until the full response is received.
 
@@ -164,11 +164,11 @@ line, in EXACTLY this format:
 category|difficulty|question text here
 ```
 
-**2. Answer evaluation** 
+**2. Answer evaluation** -
 The model is prompted to give *honest, specific* feedback rather than generic encouragement, explicitly instructed to reference what the candidate actually wrote and call out real gaps, 
 not just strengths. Output is structured JSON (score, strengths, gaps, improved example, overall feedback) since this is a single non-streamed response where JSON parsing is safe.
 
-**3. Model answer generation** 
+**3. Model answer generation** -
 The model is prompted to respond *as the candidate* ("You are a senior {role} being interviewed... answer the way a strong, well-prepared candidate would"), producing a natural 
 spoken-style answer rather than a textbook definition, plus a short list of key points a strong answer should hit.
 
