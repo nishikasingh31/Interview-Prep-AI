@@ -295,20 +295,18 @@ input:focus, select:focus {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.8rem 1rem;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
 
 .history-question-item .question-meta {
-  position: absolute;
-  top: 0.85rem;
-  right: 1rem;
   margin-bottom: 0;
 }
 
 .history-question-item .question-text {
-  margin: 0.3rem 0 0 0;
+  margin: 0;
   font-size: 0.9rem;
-  padding-right: 6rem;
 }
 
 details summary {
