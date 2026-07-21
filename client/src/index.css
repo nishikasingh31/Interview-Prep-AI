@@ -51,7 +51,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.9rem 2rem;
+  padding: 1.1rem 2rem;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   position: relative;
@@ -65,18 +65,8 @@ body {
   background-repeat: repeat-x;
 }
 
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.nav-actions .btn {
-  padding: 0.5rem 1rem;
-  font-size: 0.85rem;
-}
-
 .brand { font-weight: 800; font-size: 1.25rem; color: var(--text); text-decoration: none; letter-spacing: -0.02em; }
+.nav-actions { display: flex; align-items: center; gap: 1rem; }
 .nav-user { color: var(--accent);font-style: italic; font-weight: 600; }
 
 .container { max-width: 720px; margin: 0 auto; padding: 2rem 1rem; }
@@ -127,15 +117,8 @@ input:focus, select:focus {
 .btn-primary { background: var(--accent); color: #fff; margin-top: 1rem; }
 .btn-primary:hover { background: var(--accent-deep); }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-ghost {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border-strong);
-}
-.btn-ghost:hover {
-  background: var(--surface-alt);
-  border-color: var(--accent);
-}
+.btn-ghost { background: var(--accent); color: var(--text); border: 1px solid var(--border-strong); }
+.btn-ghost:hover { background: var(--surface-alt); }
 .btn-block { width: 100%; }
 
 .error-text { color: var(--danger); font-size: 0.9rem; }
