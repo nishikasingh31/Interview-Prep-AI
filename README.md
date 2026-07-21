@@ -111,31 +111,31 @@ interview-prep-ai/
 - A free Groq API key (console.groq.com)
 
 ### Backend Setup
-\`\`\`bash
+```bash
 cd server
 npm install
 cp .env.example .env
-\`\`\`
+```
 Fill in `.env`:
-\`\`\`
+```
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
 GROQ_API_KEY=your_groq_api_key
 GROQ_MODEL=llama-3.1-8b-instant
 JWT_SECRET=a_long_random_secret_string
 NODE_ENV=development
-\`\`\`
+```
 Run the server:
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 ### Frontend Setup
-\`\`\`bash
+```bash
 cd client
 npm install
 npm run dev
-\`\`\`
+```
 Visit `http://localhost:5173` — the Vite dev server proxies `/api/*` requests to the backend on port 5000.
 
 ## Why Groq?
@@ -151,14 +151,14 @@ Three distinct prompt strategies are used across the app, each tuned for its spe
 avoids textbook-style phrasing (e.g. "explain the concept of X") in favor of real, scenario-based questions grounded in actual tools and tradeoffs. Output is constrained to a strict `category|difficulty|question` pipe-delimited format rather than JSON, since pipe-delimited text can be parsed incrementally as it streams in — JSON cannot be safely parsed until the full response is received.
 
 Example system prompt:
-\`\`\`
+```
 You are a senior hiring manager who has personally interviewed hundreds of
 candidates for "{role}" positions. Write questions exactly as you would
 actually ask them in a real interview — specific, grounded in real
 tools/scenarios for this role. Output ONLY plain text, one question per
 line, in EXACTLY this format:
 category|difficulty|question text here
-\`\`\`
+```
 
 **2. Answer evaluation** — the model is prompted to give *honest, specific* feedback rather than generic encouragement, explicitly instructed to reference what the candidate actually wrote and call out real gaps, 
 not just strengths. Output is structured JSON (score, strengths, gaps, improved example, overall feedback) since this is a single non-streamed response where JSON parsing is safe.
