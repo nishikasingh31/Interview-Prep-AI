@@ -1,5 +1,7 @@
 import { useState, useRef } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
+
 function parseQuestions(rawText) {
   return rawText
     .split("\n")
@@ -33,7 +35,7 @@ function QuestionCard({ q, index }) {
     setSubmitting(true);
     setError("");
     try {
-      const res = await fetch("/api/answers", {
+      const res = await fetch(`${API_URL}/api/answers`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ question: q.question, userAnswer: answer }),
@@ -52,7 +54,7 @@ function QuestionCard({ q, index }) {
     setLoadingModel(true);
     setError("");
     try {
-      const res = await fetch("/api/answers/model-answer", {
+      const res = await fetch(`${API_URL}/api/answers/model-answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ question: q.question }),
@@ -204,7 +206,7 @@ export default function Dashboard() {
       token: localStorage.getItem("token"),
     });
 
-    const es = new EventSource(`/api/questions/stream?${params.toString()}`);
+    const es = new EventSource(`${API_URL}/api/questions/stream?${params.toString()}`);
     eventSourceRef.current = es;
 
     es.onmessage = (event) => {
