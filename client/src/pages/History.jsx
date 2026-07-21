@@ -86,29 +86,35 @@ export default function History() {
             ))}
           </div>
         ))}
+      
+  {tab === "answers" && (
+  answers.length === 0 ? (
+    <p className="status-text">No answers submitted yet.</p>
+  ) : (
+    <div className="history-list">
+      {answers.map((a) => (
+        <div key={a._id} className="question-card">
+          <p className="question-text">{a.question}</p>
+          <p><strong>Your answer:</strong> {a.userAnswer}</p>
 
-      {tab === "answers" &&
-        (answers.length === 0 ? (
-          <p className="status-text">No answers submitted yet.</p>
-        ) : (
-          <div className="history-list">
-            {answers.map((a) => (
-              <div key={a._id} className="question-card">
-                <p className="question-text">{a.question}</p>
-                <p>
-                  <strong>Your answer:</strong> {a.userAnswer}
-                </p>
-                {a.feedback && (
-                  <div className="feedback-box">
-                    <div className="feedback-score">Score: {a.feedback.score}/10</div>
-                    <p>{a.feedback.overallFeedback}</p>
-                  </div>
-                )}
-                <p className="history-date">{new Date(a.createdAt).toLocaleString()}</p>
+          {a.feedback && (
+            <div className="feedback-box">
+              <div className="feedback-score">
+                Score: {a.feedback.score}/10
               </div>
-            ))}
-          </div>
-        ))}
+              <p>{a.feedback.overallFeedback}</p>
+            </div>
+          )}
+
+          <p className="history-date">
+            {new Date(a.createdAt).toLocaleString()}
+          </p>
+        </div>
+      ))}
+    </div>
+  )
+)}
+
     </div>
   );
 }
