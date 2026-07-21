@@ -14,8 +14,8 @@ export default function History() {
     const fetchAll = async () => {
       try {
         const [answersRes, setsRes] = await Promise.all([
-          client.get("/answers/mine"),
-          client.get("/questions/mine"),
+          client.get("/api/answers/mine"),
+          client.get("/api/questions/mine"),
         ]);
         setAnswers(answersRes.data.data);
         setQuestionSets(setsRes.data.data);
