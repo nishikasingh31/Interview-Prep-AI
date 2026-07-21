@@ -1,6 +1,6 @@
 # Interview Prep AI
 
-A full-stack MERN-style application that generates realistic, role-specific interview questions using an LLM, lets users practice answering them, and gives AI-scored feedback — or shows a model answer instantly. 
+A Full-Stack MERN-style application that generates realistic, role-specific interview questions using an LLM, lets users practice answering them, and gives AI-scored feedback — or shows a model answer instantly. 
 Built with a Node/Express + MongoDB backend and a React (Vite) frontend, powered by an LLM via the Groq API.
 ```
 Interview Prep AI is a full-stack web app that helps job seekers practice for interviews. Users pick a role, experience level, and question type, and the app streams AI-generated, realistic interview questions in real time. Users can type their own answers to get instant AI-scored feedback, or view a model answer on demand. All questions and answers are saved to a personal history for later review.
@@ -150,7 +150,8 @@ Groq's OpenAI-compatible endpoint, so swapping to OpenAI, Gemini, or any other O
 
 Three distinct prompt strategies are used across the app, each tuned for its specific job:
 
-**1. Question generation (streaming)** — instructs the model to act as *"a senior hiring manager who has personally interviewed hundreds of candidates for this role"* rather than a generic assistant, and explicitly 
+**1. Question generation (streaming)** 
+Instructs the model to act as *"a senior hiring manager who has personally interviewed hundreds of candidates for this role"* rather than a generic assistant, and explicitly 
 avoids textbook-style phrasing (e.g. "explain the concept of X") in favor of real, scenario-based questions grounded in actual tools and tradeoffs. Output is constrained to a strict `category|difficulty|question` pipe-delimited format rather than JSON, since pipe-delimited text can be parsed incrementally as it streams in — JSON cannot be safely parsed until the full response is received.
 
 Example system prompt:
@@ -163,18 +164,20 @@ line, in EXACTLY this format:
 category|difficulty|question text here
 ```
 
-**2. Answer evaluation** — the model is prompted to give *honest, specific* feedback rather than generic encouragement, explicitly instructed to reference what the candidate actually wrote and call out real gaps, 
+**2. Answer evaluation** 
+The model is prompted to give *honest, specific* feedback rather than generic encouragement, explicitly instructed to reference what the candidate actually wrote and call out real gaps, 
 not just strengths. Output is structured JSON (score, strengths, gaps, improved example, overall feedback) since this is a single non-streamed response where JSON parsing is safe.
 
-**3. Model answer generation** — the model is prompted to respond *as the candidate* ("You are a senior {role} being interviewed... answer the way a strong, well-prepared candidate would"), producing a natural 
+**3. Model answer generation** 
+The model is prompted to respond *as the candidate* ("You are a senior {role} being interviewed... answer the way a strong, well-prepared candidate would"), producing a natural 
 spoken-style answer rather than a textbook definition, plus a short list of key points a strong answer should hit.
 
 **Reliability techniques used:**
 - **Token budgeting** — `max_tokens` is scaled dynamically based on how many questions were requested (`numQuestions * ~120`), since a fixed low limit was causing responses to be truncated mid-question for larger batches.
 - **Regex-based JSON extraction** (`raw.match(/\{[\s\S]*\}/)`) as a safety net for the non-streamed endpoints, in case the model wraps its JSON output in extra commentary or markdown fences despite instructions not to.
-- **Auto top-up on shortfall** — if the parsed question count comes up short (a known LLM reliability issue — models don't always hit exact counts from instructions alone), a second, smaller follow-up call requests only
-- the missing questions and explicitly excludes ones already generated, so the final result always matches what the user asked for.
-- **Malformed-line filtering** — any streamed line that doesn't fully match the expected pipe format (e.g. cut off mid-sentence) is filtered out before saving, rather than storing incomplete/empty question entries.
+- **Auto top-up on shortfall** — If the parsed question count comes up short (a known LLM reliability issue — models don't always hit exact counts from instructions alone), a second, smaller follow-up call requests only
+- The missing questions and explicitly excludes ones already generated, so the final result always matches what the user asked for.
+- **Malformed-line filtering** — Any streamed line that doesn't fully match the expected pipe format (e.g. cut off mid-sentence) is filtered out before saving, rather than storing incomplete/empty question entries.
 
 ## Key Engineering Decisions
 
