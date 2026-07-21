@@ -1,5 +1,9 @@
 import QuestionSet from "../models/Questions.js";
-import { generateInterviewQuestions, streamInterviewQuestions } from "../services/aiService.js";
+import {
+  generateInterviewQuestions,
+  streamInterviewQuestions,
+  generateExtraQuestions,
+} from "../services/aiService.js";
 
 export const generateQuestions = async (req, res) => {
   console.log("generateQuestions HIT");
@@ -13,7 +17,22 @@ export const generateQuestions = async (req, res) => {
       return res.status(400).json({ success: false, message: "numQuestions must be between 1 and 20." });
     }
 
-    const questions = await generateInterviewQuestions({ role, experienceLevel, topics, numQuestions });
+    // Pull recent questions for this user+role so we can ask the AI to avoid repeats
+    let excludeQuestions = [];
+    if (req.user?._id) {
+      const recentSets = await QuestionSet.find({ userId: req.user._id, role })
+        .sort({ createdAt: -1 })
+        .limit(5);
+      excludeQuestions = recentSets.flatMap((set) => set.questions.map((q) => q.question)).slice(0, 40);
+    }
+
+    const questions = await generateInterviewQuestions({
+      role,
+      experienceLevel,
+      topics,
+      numQuestions,
+      excludeQuestions,
+    });
 
     const savedSet = await QuestionSet.create({
       role,
@@ -59,17 +78,35 @@ export const streamQuestions = async (req, res) => {
       return res.status(400).json({ success: false, message: "role query param is required." });
     }
 
+    const targetCount = Number(numQuestions);
+
     const categoryList = categories
       ? categories.split(",")
       : ["technical", "behavioral", "situational", "general"];
 
+    // Pull recent questions for this user+role so we can ask the AI to avoid repeats
+    let excludeQuestions = [];
+    if (req.user?._id) {
+      const recentSets = await QuestionSet.find({ userId: req.user._id, role })
+        .sort({ createdAt: -1 })
+        .limit(5);
+      excludeQuestions = recentSets.flatMap((set) => set.questions.map((q) => q.question)).slice(0, 40);
+    }
+
     const fullText = await streamInterviewQuestions(
-      { role, experienceLevel, numQuestions: Number(numQuestions), difficulty, categories: categoryList },
+      {
+        role,
+        experienceLevel,
+        numQuestions: targetCount,
+        difficulty,
+        categories: categoryList,
+        excludeQuestions,
+      },
       res
     );
 
     // Parse the streamed pipe-format text into structured questions
-    const parsedQuestions = fullText
+    let parsedQuestions = fullText
       .split("\n")
       .map((line) => line.trim())
       .filter((line) => line.includes("|"))
@@ -85,16 +122,35 @@ export const streamQuestions = async (req, res) => {
           question: questionText,
         };
       })
-      .filter(Boolean)
-      .slice(0, Number(numQuestions));
+      .filter(Boolean);
 
-    // Save the generated set for the logged-in user, if any were parsed
-    if (parsedQuestions.length > 0 && req.user) {
+    // Top up if the model returned fewer questions than requested
+    if (parsedQuestions.length < targetCount) {
+      const shortfall = targetCount - parsedQuestions.length;
+      try {
+        const extra = await generateExtraQuestions({
+          role,
+          experienceLevel,
+          difficulty,
+          categories: categoryList,
+          count: shortfall,
+          existingQuestions: parsedQuestions,
+        });
+        parsedQuestions = [...parsedQuestions, ...extra];
+      } catch (topUpErr) {
+        console.error("Top-up generation failed:", topUpErr.message);
+        // Not fatal — just proceed with what we have
+      }
+    }
+
+    const finalQuestions = parsedQuestions.slice(0, targetCount);
+
+    if (finalQuestions.length > 0 && req.user) {
       await QuestionSet.create({
         role,
         experienceLevel,
-        numQuestions: Number(numQuestions),
-        questions: parsedQuestions,
+        numQuestions: targetCount,
+        questions: finalQuestions,
         userId: req.user._id,
       });
     }
