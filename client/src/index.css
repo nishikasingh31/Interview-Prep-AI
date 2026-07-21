@@ -51,7 +51,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.1rem 2rem;
+  padding: 0.9rem 2rem;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   position: relative;
@@ -63,6 +63,17 @@ body {
   height: 6px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='6'%3E%3Cpath d='M0 3 Q15 0 30 3 T60 3 T90 3 T120 3' fill='none' stroke='%234C7A8C' stroke-opacity='0.18' stroke-width='1.2'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.nav-actions .btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
 }
 
 .brand { font-weight: 800; font-size: 1.25rem; color: var(--text); text-decoration: none; letter-spacing: -0.02em; }
