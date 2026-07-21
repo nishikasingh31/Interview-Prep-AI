@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import client from "../api/client.js";
 
-const capitalize = (word) => word.charAt(0).toUpperCase() + word.slice(1);
+const capitalize = (word) => (word ? word.charAt(0).toUpperCase() + word.slice(1) : "");
 
 export default function History() {
   const [tab, setTab] = useState("searches");
@@ -34,69 +34,81 @@ export default function History() {
   return (
     <div className="history-page">
       <h1>Your History</h1>
+
       <div className="tabs">
-        <button className={`tab ${tab === "searches" ? "tab-active" : ""}`} onClick={() => setTab("searches")}>
+        <button
+          className={`tab ${tab === "searches" ? "tab-active" : ""}`}
+          onClick={() => setTab("searches")}
+        >
           Past searches ({questionSets.length})
         </button>
-        <button className={`tab ${tab === "answers" ? "tab-active" : ""}`} onClick={() => setTab("answers")}>
+        <button
+          className={`tab ${tab === "answers" ? "tab-active" : ""}`}
+          onClick={() => setTab("answers")}
+        >
           Answered questions ({answers.length})
         </button>
       </div>
 
-      {tab === "searches" && (
-  questionSets.length === 0 ? (
-    <p className="status-text">No searches yet — generate some questions first.</p>
-  ) : (
-    <div className="history-list">
-      {questionSets.map((set) => (
-        <div key={set._id} className="question-card">
-          <p className="question-text">
-            <strong>{set.role}</strong> — {capitalize(set.experienceLevel)} Level ({set.questions.length} Questions)
-          </p>
-          <p className="history-date">{new Date(set.createdAt).toLocaleString()}</p>
-          <details>
-            <summary>View questions</summary>
-            <div className="history-question-list">
-              {set.questions.map((q, i) => (
-                <div key={i} className="history-question-item">
-                  <div className="question-meta">
-                    <span className={`badge badge-category-${q.category}`}>
-                      {q.category}
-                    </span>
-                    <span className={`badge badge-difficulty-${q.difficulty}`}>{q.difficulty}</span>
+      {tab === "searches" &&
+        (questionSets.length === 0 ? (
+          <p className="status-text">No searches yet — generate some questions first.</p>
+        ) : (
+          <div className="history-list">
+            {questionSets.map((set) => (
+              <div key={set._id} className="question-card">
+                <p className="question-text">
+                  <strong>{set.role}</strong> — {capitalize(set.experienceLevel)} Level (
+                  {set.questions.length} Questions)
+                </p>
+                <p className="history-date">{new Date(set.createdAt).toLocaleString()}</p>
+                <details>
+                  <summary>View questions</summary>
+                  <div className="history-question-list">
+                    {set.questions.map((q, i) => (
+                      <div key={i} className="history-question-item">
+                        <div className="question-meta">
+                          <span className={`badge badge-category-${q.category}`}>
+                            {q.category}
+                          </span>
+                          <span className={`badge badge-difficulty-${q.difficulty}`}>
+                            {q.difficulty}
+                          </span>
+                        </div>
+                        <p className="question-text">
+                          {i + 1}. {q.question}
+                        </p>
+                      </div>
+                    ))}
                   </div>
-                  <p className="question-text">{i + 1}. {q.question}</p>
-                </div>
-              ))}
-            </div>
-          </details>
-        </div>
-      ))}
-    </div>
-  )
-)}
+                </details>
+              </div>
+            ))}
+          </div>
+        ))}
 
-{tab === "answers" && (
-  answers.length === 0 ? (
-    <p className="status-text">No answers submitted yet.</p>
-  ) : (
-    <div className="history-list">
-      {answers.map((a) => (
-        <div key={a._id} className="question-card">
-          <p className="question-text">{a.question}</p>
-          <p><strong>Your answer:</strong> {a.userAnswer}</p>
-          {a.feedback && (
-            <div className="feedback-box">
-              <div className="feedback-score">Score: {a.feedback.score}/10</div>
-              <p>{a.feedback.overallFeedback}</p>
-            </div>
-          )}
-          <p className="history-date">{new Date(a.createdAt).toLocaleString()}</p>
-        </div>
-      ))}
-    </div>
-  )
-)}
+      {tab === "answers" &&
+        (answers.length === 0 ? (
+          <p className="status-text">No answers submitted yet.</p>
+        ) : (
+          <div className="history-list">
+            {answers.map((a) => (
+              <div key={a._id} className="question-card">
+                <p className="question-text">{a.question}</p>
+                <p>
+                  <strong>Your answer:</strong> {a.userAnswer}
+                </p>
+                {a.feedback && (
+                  <div className="feedback-box">
+                    <div className="feedback-score">Score: {a.feedback.score}/10</div>
+                    <p>{a.feedback.overallFeedback}</p>
+                  </div>
+                )}
+                <p className="history-date">{new Date(a.createdAt).toLocaleString()}</p>
+              </div>
+            ))}
+          </div>
+        ))}
     </div>
   );
 }
