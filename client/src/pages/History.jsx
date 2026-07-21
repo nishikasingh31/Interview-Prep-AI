@@ -50,15 +50,15 @@ export default function History() {
         </button>
       </div>
 
-      {tab === "searches" &&
-        (questionSets.length === 0 ? (
-          <p className="status-text">No searches yet — generate some questions first.</p>
+      {tab === "searches" && (
+        questionSets.length === 0 ? (
+          <p className="status-text">No searches yet - generate some questions first.</p>
         ) : (
           <div className="history-list">
             {questionSets.map((set) => (
               <div key={set._id} className="question-card">
                 <p className="question-text">
-                  <strong>{set.role}</strong> — {capitalize(set.experienceLevel)} Level (
+                  <strong>{set.role}</strong> - {capitalize(set.experienceLevel)} Level (
                   {set.questions.length} Questions)
                 </p>
                 <p className="history-date">{new Date(set.createdAt).toLocaleString()}</p>
@@ -85,36 +85,32 @@ export default function History() {
               </div>
             ))}
           </div>
-        ))}
-      
-  {tab === "answers" && (
-  answers.length === 0 ? (
-    <p className="status-text">No answers submitted yet.</p>
-  ) : (
-    <div className="history-list">
-      {answers.map((a) => (
-        <div key={a._id} className="question-card">
-          <p className="question-text">{a.question}</p>
-          <p><strong>Your answer:</strong> {a.userAnswer}</p>
+        )
+      )}
 
-          {a.feedback && (
-            <div className="feedback-box">
-              <div className="feedback-score">
-                Score: {a.feedback.score}/10
+      {tab === "answers" && (
+        answers.length === 0 ? (
+          <p className="status-text">No answers submitted yet.</p>
+        ) : (
+          <div className="history-list">
+            {answers.map((a) => (
+              <div key={a._id} className="question-card">
+                <p className="question-text">{a.question}</p>
+                <p>
+                  <strong>Your answer:</strong> {a.userAnswer}
+                </p>
+                {a.feedback && (
+                  <div className="feedback-box">
+                    <div className="feedback-score">Score: {a.feedback.score}/10</div>
+                    <p>{a.feedback.overallFeedback}</p>
+                  </div>
+                )}
+                <p className="history-date">{new Date(a.createdAt).toLocaleString()}</p>
               </div>
-              <p>{a.feedback.overallFeedback}</p>
-            </div>
-          )}
-
-          <p className="history-date">
-            {new Date(a.createdAt).toLocaleString()}
-          </p>
-        </div>
-      ))}
-    </div>
-  )
-)}
-
+            ))}
+          </div>
+        )
+      )}
     </div>
   );
 }
