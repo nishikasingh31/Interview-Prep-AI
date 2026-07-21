@@ -70,12 +70,12 @@ body {
 .nav-user { color: var(--accent);font-style: italic; font-weight: 600; }
 
 .nav-btn {
-  background: transparent;
+  background: var(--accent);
   color: var(--text);
   border: 1px solid var(--border-strong);
   padding: 0.5rem 1.1rem;
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 700;
   border-radius: 9px;
   line-height: 1.2;
 }
