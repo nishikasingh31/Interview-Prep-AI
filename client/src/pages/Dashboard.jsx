@@ -1,5 +1,7 @@
 import { useState, useRef } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function parseQuestions(rawText) {
   return rawText
     .split("\n")
@@ -33,7 +35,7 @@ function QuestionCard({ q, index }) {
     setSubmitting(true);
     setError("");
     try {
-      const res = await fetch("/api/answers", {
+      const res = await fetch(`${API_URL}/api/answers`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ question: q.question, userAnswer: answer }),
@@ -52,7 +54,7 @@ function QuestionCard({ q, index }) {
     setLoadingModel(true);
     setError("");
     try {
-      const res = await fetch("/api/answers/model-answer", {
+      const res = await fetch(`${API_URL}/api/answers/model-answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ question: q.question }),
@@ -70,7 +72,7 @@ function QuestionCard({ q, index }) {
   return (
     <div className="question-card">
       <div className="question-meta">
-        <span className= {`badge badge-category-${q.category}`}>
+        <span className={`badge badge-category-${q.category}`}>
           {q.category}
         </span>
         <span className={`badge badge-difficulty-${q.difficulty}`}>{q.difficulty}</span>
@@ -141,8 +143,8 @@ export default function Dashboard() {
   const [role, setRole] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("Junior");
   const [numQuestions, setNumQuestions] = useState(5);
-  const [difficulty, setDifficulty] = useState("mixed"); 
-  const [categories, setCategories] = useState({          
+  const [difficulty, setDifficulty] = useState("mixed");
+  const [categories, setCategories] = useState({
     technical: true,
     behavioral: true,
     situational: true,
@@ -186,8 +188,7 @@ export default function Dashboard() {
       token: localStorage.getItem("token"),
     });
 
-    const apiUrl = import.meta.env.VITE_API_URL.replace(/\/$/, "");
-    const es = new EventSource(`${apiUrl}/api/questions/stream?${params.toString()}`);
+    const es = new EventSource(`${API_URL}/api/questions/stream?${params.toString()}`);
     eventSourceRef.current = es;
 
     es.onmessage = (event) => {
