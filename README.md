@@ -2,6 +2,9 @@
 
 A full-stack MERN-style application that generates realistic, role-specific interview questions using an LLM, lets users practice answering them, and gives AI-scored feedback — or shows a model answer instantly. 
 Built with a Node/Express + MongoDB backend and a React (Vite) frontend, powered by an LLM via the Groq API.
+```
+Interview Prep AI is a full-stack web app that helps job seekers practice for interviews. Users pick a role, experience level, and question type, and the app streams AI-generated, realistic interview questions in real time. Users can type their own answers to get instant AI-scored feedback, or view a model answer on demand. All questions and answers are saved to a personal history for later review.
+```
 
 ## Features
 
