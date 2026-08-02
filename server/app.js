@@ -5,7 +5,7 @@ import interviewRoutes from './src/routes/interviewRoutes.js';
 
 const app = express();
 
-// Middleware
+//middleware
 app.use(cors({
   origin: "https://interview-prep-ai-nishika-singh.vercel.app",
   credentials: true,
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/interview', interviewRoutes);
 
-// Simple test route to confirm server works
+// test route to confirm server works
 app.get('/', (req, res) => {
   res.send('AI Interview Prep API is running');
 });
