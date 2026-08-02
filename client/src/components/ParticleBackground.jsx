@@ -8,7 +8,7 @@ const particlesInit = async (engine) => {
 
 const ParticleBackground = () => {
     const particlesLoaded = useCallback(async (container) => {
-        // optional: console.log("Particles loaded", container);
+        // console.log("Particles loaded", container);
     }, []);
 
     const options = {
