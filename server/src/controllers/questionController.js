@@ -17,7 +17,7 @@ export const generateQuestions = async (req, res) => {
       return res.status(400).json({ success: false, message: "numQuestions must be between 1 and 20." });
     }
 
-    // Pull recent questions for this user+role so we can ask the AI to avoid repeats
+    //pull recent questions for this user+role so we can ask the AI to avoid repeats
     let excludeQuestions = [];
     if (req.user?._id) {
       const recentSets = await QuestionSet.find({ userId: req.user._id, role })
@@ -105,7 +105,7 @@ export const streamQuestions = async (req, res) => {
       res
     );
 
-    // Parse the streamed pipe-format text into structured questions
+    //parse the streamed pipe-format text into structured questions
     let parsedQuestions = fullText
       .split("\n")
       .map((line) => line.trim())
@@ -124,7 +124,7 @@ export const streamQuestions = async (req, res) => {
       })
       .filter(Boolean);
 
-    // Top up if the model returned fewer questions than requested
+    //top up if the model returned fewer questions than requested
     if (parsedQuestions.length < targetCount) {
       const shortfall = targetCount - parsedQuestions.length;
       try {
